@@ -1,9 +1,11 @@
 package com.example.getir.presention
 
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.getir.presention.cartView.CartScreen
 import com.example.getir.presention.categoryView.CategoryScreen
 import com.example.getir.presention.productView.ProductScreen
@@ -20,8 +22,8 @@ fun GetirNavHost() {
 
         composable(Routes.CATEGORY) {
             CategoryScreen(
-                onCategoryClick = {
-                    navController.navigate(Routes.PRODUCT)
+                onCategoryClick = { categoryId ->
+                    navController.navigate("product/$categoryId") // categoryId gönderiyoruz
                 },
                 onCartClick = {
                     navController.navigate(Routes.CART)
@@ -29,17 +31,18 @@ fun GetirNavHost() {
             )
         }
 
-        composable(Routes.PRODUCT) {
+        composable(
+            route = Routes.PRODUCT,
+            arguments = listOf(navArgument("categoryId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val categoryId = backStackEntry.arguments?.getString("categoryId")!!
             ProductScreen(
-                onAddToCart = { cartItem ->
-                    // Product → Cart event
-                },
+                categoryId = categoryId,
                 onCartClick = {
                     navController.navigate(Routes.CART)
                 }
             )
         }
-
         composable(Routes.CART) {
             CartScreen()
         }

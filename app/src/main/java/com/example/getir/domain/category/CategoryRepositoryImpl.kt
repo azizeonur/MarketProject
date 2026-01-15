@@ -4,8 +4,9 @@ import com.example.getir.data.category.CategoryRepository
 import com.example.getir.data.product.ProductApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import javax.inject.Inject
 
-class CategoryRepositoryImpl(
+class CategoryRepositoryImpl @Inject constructor(
     private val api: ProductApi
 ) : CategoryRepository {
 

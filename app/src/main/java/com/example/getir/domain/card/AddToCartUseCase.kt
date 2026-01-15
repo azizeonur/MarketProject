@@ -1,8 +1,8 @@
 package com.example.getir.domain.card
 
-import CartRepository
+import javax.inject.Inject
 
-class AddToCartUseCase(
+class AddToCartUseCase @Inject constructor(
     private val repository: CartRepository
 ) {
     suspend operator fun invoke(item: CartItem) {

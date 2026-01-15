@@ -5,10 +5,11 @@ import com.example.getir.data.product.ProductRepository
 import com.example.getir.data.product.toDomain
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import javax.inject.Inject
 
-class ProductRepositoryImpl(
+class ProductRepositoryImpl @Inject constructor(
     private val api: ProductApi
-) : ProductRepository {
+) : ProductRepository{
 
     override fun getProducts(categoryId: String): Flow<List<Product>> = flow {
         val response = api.getProducts(categoryId)

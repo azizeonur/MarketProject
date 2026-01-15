@@ -6,12 +6,15 @@ data class ProductDto(
     val id: String,
     val name: String,
     val price: Double,
+    val imageUrl: String,
     val categoryId: String
 )
 fun ProductDto.toDomain(): Product {
     return Product(
         id = id,
         name = name,
-        price = price
+        price = price,
+        imageUrl = imageUrl,
+        categoryId = categoryId
     )
 }
