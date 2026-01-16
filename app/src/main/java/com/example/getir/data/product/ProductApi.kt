@@ -38,5 +38,7 @@ suspend fun getCategories(): List<CategoryDto>
     suspend fun createOrder(
         @Body request: OrderRequest
     )
+    @DELETE("cart/{product_id}")
+    suspend fun removeFromCart(@Path("product_id") productId: String)
 }
 

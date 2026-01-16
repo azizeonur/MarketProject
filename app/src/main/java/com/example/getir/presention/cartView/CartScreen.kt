@@ -28,7 +28,7 @@ import com.example.getir.domain.card.CartItem
 
 @Composable
 fun CartScreen(
-    viewModel: CartViewModel = hiltViewModel()
+    viewModel: CartViewModel
 ) {
     val state = viewModel.uiState.collectAsState().value
 

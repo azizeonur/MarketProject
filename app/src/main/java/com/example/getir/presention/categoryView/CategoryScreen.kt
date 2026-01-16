@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -23,6 +24,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
 import coil.compose.AsyncImage
 import com.example.getir.domain.category.Category
@@ -41,8 +43,6 @@ fun CategoryScreen(
     )
 }
 
-// ----------------------------------------
-// UI composable (Preview ve test için)
 @Composable
 fun CategoryScreenContent(
     categories: List<Category>,
@@ -50,58 +50,57 @@ fun CategoryScreenContent(
     onCartClick: () -> Unit
 ) {
     LazyVerticalGrid(
-        columns = GridCells.Fixed(2),
+        columns = GridCells.Fixed(4),
         modifier = Modifier.padding(8.dp)
     ) {
         items(categories) { category ->
             CategoryCard(category) {
-                onCategoryClick(category.id) // cart click buradan kaldır
+                onCategoryClick(category.id)
             }
 
         }
     }
 }
 
-// ----------------------------------------
-// Tekil kategori kartı
 @Composable
 fun CategoryCard(
     category: Category,
     onClick: () -> Unit
 ) {
-    Card(
-        modifier = Modifier
-            .padding(8.dp)
-            .fillMaxWidth()
-            .aspectRatio(1f)
-            .clickable { onClick() },
-        elevation = CardDefaults.cardElevation(4.dp)
+    Column(
+        modifier = Modifier.padding(8.dp)
     ) {
-        Column(
+        Card(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(12.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+                .size(75.dp)
+                .clickable { onClick() },
+            elevation = CardDefaults.cardElevation(4.dp)
         ) {
-            AsyncImage(
-                model = category.imageUrl,
-                contentDescription = category.name,
-                modifier = Modifier.size(80.dp)
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Text(
-                text = category.name,
-                style = MaterialTheme.typography.bodyMedium
-            )
+            Column(
+                modifier = Modifier
+                    .fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                AsyncImage(
+                    model = category.imageUrl,
+                    contentDescription = category.name,
+                    modifier = Modifier.
+                    fillMaxSize(),
+                    contentScale = ContentScale.Crop
+                )
+            }
         }
+
+        Text(
+            text = category.name,
+            style = MaterialTheme.typography.bodyMedium,
+            modifier = Modifier
+                .padding(top = 4.dp)
+        )
     }
 }
 
-// ----------------------------------------
-// Preview
 @Preview(showBackground = true)
 @Composable
 fun CategoryScreenPreview() {
