@@ -50,12 +50,14 @@ import com.example.getir.domain.card.CartItem
 import com.example.getir.domain.product.Product
 import com.example.getir.presention.cartView.CartEvent
 import com.example.getir.presention.cartView.CartViewModel
+import com.example.getir.ui.theme.EmeraldGreen
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun ProductScreen(
     viewModel: ProductViewModel = hiltViewModel(),
     cartViewModel: CartViewModel = hiltViewModel(),
+    onProductClick: (String) -> Unit,
     categoryId: String,
     onCartClick: () -> Unit
 ) {
@@ -121,6 +123,9 @@ fun ProductScreen(
                 ProductCard(
                     product = product,
                     quantity = quantityInCart,
+                    onCardClick = {
+                        onProductClick(product.id)
+                    },
                     onIncrease = {
                         cartViewModel.onEvent(
                             CartEvent.AddToCart(
@@ -142,86 +147,5 @@ fun ProductScreen(
                 )
             }
         }
-    }
-}
-
-@Composable
-fun ProductCard(
-    product: Product,
-    quantity: Int,
-    onIncrease: () -> Unit,
-    onDecrease: () -> Unit
-) {
-    Column(
-        modifier = Modifier.padding(4.dp)
-    ) {
-
-        Box(modifier = Modifier.size(120.dp)) {
-
-            Card(
-                modifier = Modifier.fillMaxSize(),
-                elevation = CardDefaults.cardElevation(4.dp)
-            ) {
-                AsyncImage(
-                    model = product.imageUrl,
-                    contentDescription = product.name,
-                    modifier = Modifier.fillMaxSize()
-                )
-            }
-
-            Column(
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .background(
-                        Color.White.copy(alpha = 0.8f),
-                        RoundedCornerShape(6.dp)
-                    )
-                    .padding(4.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-
-                IconButton(
-                    onClick = { if (quantity > 0) onDecrease() },
-                    modifier = Modifier.size(20.dp)
-                ) {
-                    Icon(
-                        Icons.Default.ArrowDropDown,
-                        contentDescription = "Decrease",
-                        modifier = Modifier.size(14.dp)
-                    )
-                }
-
-                Text(
-                    text = quantity.toString(),
-                    style = MaterialTheme.typography.bodySmall,
-                    modifier = Modifier.padding(vertical = 2.dp)
-                )
-
-                IconButton(
-                    onClick = onIncrease,
-                    modifier = Modifier.size(20.dp)
-                ) {
-                    Icon(
-                        Icons.Default.Add,
-                        contentDescription = "Increase",
-                        modifier = Modifier.size(14.dp)
-                    )
-                }
-            }
-        }
-
-        Spacer(modifier = Modifier.height(4.dp))
-
-        Text(
-            text = product.name,
-            style = MaterialTheme.typography.bodySmall,
-            maxLines = 1
-        )
-
-        Text(
-            text = "${product.price} ₺",
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.primary
-        )
     }
 }

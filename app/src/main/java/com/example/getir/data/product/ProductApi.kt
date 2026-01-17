@@ -1,5 +1,8 @@
 package com.example.getir.data.product
 
+import com.example.getir.data.auth.AuthResponseDto
+import com.example.getir.data.auth.LoginRequestDto
+import com.example.getir.data.auth.RegisterRequestDto
 import com.example.getir.data.card.CartItemDto
 import com.example.getir.data.category.CategoryDto
 import com.example.getir.data.checkout.OrderRequest
@@ -40,5 +43,21 @@ suspend fun getCategories(): List<CategoryDto>
     )
     @DELETE("cart/{product_id}")
     suspend fun removeFromCart(@Path("product_id") productId: String)
+
+    @GET("products/detail/{productId}")
+    suspend fun getProductDetail(
+        @Path("productId") productId: String
+    ): ProductDto
+
+
+    @POST("auth/login")
+    suspend fun login(
+        @Body request: LoginRequestDto
+    ): AuthResponseDto
+
+    @POST("auth/register")
+    suspend fun register(
+        @Body request: RegisterRequestDto
+    ): AuthResponseDto
 }
 

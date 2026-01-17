@@ -7,4 +7,6 @@ import kotlinx.coroutines.flow.Flow
 
 interface ProductRepository {
     fun getProducts(categoryId: String): Flow<List<Product>>
+    suspend fun getProductDetail(productId: String): Product
+    suspend fun addToCart(product: Product, quantity: Int)
 }

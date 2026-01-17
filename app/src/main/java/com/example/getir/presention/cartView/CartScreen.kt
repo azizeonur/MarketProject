@@ -1,6 +1,7 @@
 package com.example.getir.presention.cartView
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.runtime.getValue
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -18,6 +19,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,7 +32,21 @@ import com.example.getir.domain.card.CartItem
 fun CartScreen(
     viewModel: CartViewModel
 ) {
-    val state = viewModel.uiState.collectAsState().value
+    val state by viewModel.uiState.collectAsState()
+
+    // ✅ Success yakala
+    LaunchedEffect(state.isOrderSuccess) {
+        if (state.isOrderSuccess) {
+            viewModel.onEvent(CartEvent.ClearMessage)
+        }
+    }
+
+    // ✅ Error yakala
+    LaunchedEffect(state.error) {
+        state.error?.let {
+            viewModel.onEvent(CartEvent.ClearMessage)
+        }
+    }
 
     Box(
         modifier = Modifier
@@ -40,20 +56,18 @@ fun CartScreen(
 
         Column(modifier = Modifier.fillMaxSize()) {
 
-            // 🛒 Cart List
             LazyColumn(
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxWidth()
             ) {
                 items(state.items) { item ->
-                    CartItemRow(item = item)
+                    CartItemRow(item)
                 }
             }
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            // 💰 Total
             Text(
                 text = "Toplam: ${state.totalPrice} ₺",
                 style = MaterialTheme.typography.titleMedium
@@ -61,41 +75,33 @@ fun CartScreen(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // ✅ Checkout Button
             Button(
-                onClick = {
-                    viewModel.onEvent(CartEvent.Checkout)
-                },
+                onClick = { viewModel.onEvent(CartEvent.Checkout) },
                 enabled = state.items.isNotEmpty() && !state.isLoading,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Siparişi Tamamla")
+                if (state.isLoading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.height(20.dp),
+                        strokeWidth = 2.dp
+                    )
+                } else {
+                    Text("Siparişi Tamamla")
+                }
             }
 
-            // ❌ Error
             state.error?.let {
                 Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = it,
-                    color = MaterialTheme.colorScheme.error
-                )
+                Text(it, color = MaterialTheme.colorScheme.error)
             }
 
-            // 🎉 Success
             if (state.isOrderSuccess) {
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "Sipariş başarıyla alındı 🎉",
+                    "Sipariş başarıyla alındı 🎉",
                     color = MaterialTheme.colorScheme.primary
                 )
             }
-        }
-
-        // ⏳ Loading Overlay
-        if (state.isLoading) {
-            CircularProgressIndicator(
-                modifier = Modifier.align(Alignment.Center)
-            )
         }
     }
 }
