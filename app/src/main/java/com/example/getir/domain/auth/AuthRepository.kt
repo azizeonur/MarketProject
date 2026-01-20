@@ -10,4 +10,10 @@ interface AuthRepository {
     suspend fun register(
         request: RegisterRequest
     ): AuthResult
+
+    fun getUserId(): String?
+
+    fun isLoggedIn(): Boolean
+
+    fun logout()
 }

@@ -1,15 +1,19 @@
 package com.example.getir.data.product
 
+import com.example.getir.data.address.AddressDto
 import com.example.getir.data.auth.AuthResponseDto
 import com.example.getir.data.auth.LoginRequestDto
 import com.example.getir.data.auth.RegisterRequestDto
 import com.example.getir.data.card.CartItemDto
 import com.example.getir.data.category.CategoryDto
 import com.example.getir.data.checkout.OrderRequest
+import com.example.getir.data.payment.PaymentRequestDto
+import com.example.getir.data.payment.PaymentResponseDto
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Path
 
 interface ProductApi {
@@ -21,9 +25,8 @@ interface ProductApi {
     ): List<ProductDto>
 
 
-@GET("categories")
-suspend fun getCategories(): List<CategoryDto>
-
+    @GET("categories")
+    suspend fun getCategories(): List<CategoryDto>
 
 
     @GET("cart")
@@ -41,6 +44,7 @@ suspend fun getCategories(): List<CategoryDto>
     suspend fun createOrder(
         @Body request: OrderRequest
     )
+
     @DELETE("cart/{product_id}")
     suspend fun removeFromCart(@Path("product_id") productId: String)
 
@@ -59,5 +63,29 @@ suspend fun getCategories(): List<CategoryDto>
     suspend fun register(
         @Body request: RegisterRequestDto
     ): AuthResponseDto
+
+
+    // --- Address ---
+    @POST("address") // Sonuna slash ekle
+    suspend fun saveAddress(@Body address: AddressDto)
+
+    @GET("address/{userId}") // Diğerlerine de ekleyebilirsin
+    suspend fun getAddresses(
+        @Path("userId") userId: String
+    ): List<AddressDto>
+
+    @DELETE("address/{addressId}")
+    suspend fun deleteAddress(@Path("addressId") addressId: String)
+
+    @PUT("address")
+    suspend fun updateAddress(@Body address: AddressDto)
+
+    @GET("address/detail/{addressId}")
+    suspend fun getAddressById(
+        @Path("addressId") addressId: String
+    ): AddressDto
+
+    @POST("payment/process")
+    suspend fun processPayment(@Body payment: PaymentRequestDto): PaymentResponseDto
 }
 

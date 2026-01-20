@@ -1,5 +1,7 @@
 package com.example.getir.domain.auth
 
 data class AuthUser(
-    val token : String
-)
+    val token : String,
+    val userId: String,
+
+    )

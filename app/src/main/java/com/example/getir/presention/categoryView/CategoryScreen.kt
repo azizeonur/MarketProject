@@ -47,7 +47,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import coil.compose.AsyncImage
 import com.example.getir.domain.category.Category
 import com.example.getir.ui.theme.EmeraldGreen
-import com.example.getir.ui.theme.TopAppBar
+import com.example.getir.ui.theme.TopAppBarMenu
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -55,13 +55,13 @@ import com.example.getir.ui.theme.TopAppBar
 fun CategoryScreen(
     viewModel: CategoryViewModel = hiltViewModel(),
     onCategoryClick: (String) -> Unit,
-    onCartClick: () -> Unit
+    onLogout: () -> Unit
 ) {
     val categories = viewModel.categories.collectAsState(initial = emptyList()).value
 
     Scaffold(
         topBar = {
-            TopAppBar(onCartClick = onCartClick)
+            TopAppBarMenu(onLogout = onLogout)
         }
     ) { paddingValues ->
         CategoryScreenContent(

@@ -47,7 +47,7 @@ import com.example.getir.domain.product.Product
 import com.example.getir.presention.cartView.CartEvent
 import com.example.getir.presention.cartView.CartViewModel
 import com.example.getir.ui.theme.EmeraldGreen
-import com.example.getir.ui.theme.TopAppBar
+import com.example.getir.ui.theme.TopAppBarWithCartAndMenu
 
 @Composable
 fun ProductDetailScreen(
@@ -55,7 +55,8 @@ fun ProductDetailScreen(
     productViewModel: ProductDetailViewModel = hiltViewModel(),
     cartViewModel: CartViewModel,
     onBack: () -> Unit,
-    onCartClick: () -> Unit
+    onCartClick: () -> Unit,
+    onLogout: () -> Unit
 ) {
     var quantity by remember { mutableStateOf(1) }
 
@@ -66,7 +67,8 @@ fun ProductDetailScreen(
     }
 
     Scaffold(
-        topBar = { TopAppBar(onCartClick = onCartClick) }
+        topBar = { TopAppBarWithCartAndMenu(onCartClick = onCartClick,
+            onLogout = onLogout) }
     ) { padding ->
 
         if (product == null) {

@@ -14,11 +14,29 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
 @HiltViewModel
-class CartViewModel @Inject constructor() : ViewModel() {
+class CartViewModel @Inject constructor(
+    private val cartPrefs: CartPrefs
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow(CartUiState())
     val uiState: StateFlow<CartUiState> = _uiState
+
+
+    init {
+        loadSavedCart()
+    }
+
+    private fun loadSavedCart() {
+        val savedItems = cartPrefs.getCart()
+        if (savedItems.isNotEmpty()) {
+            _uiState.value = _uiState.value.copy(
+                items = savedItems,
+                totalPrice = savedItems.sumOf { it.price * it.quantity }
+            )
+        }
+    }
 
     fun onEvent(event: CartEvent) {
         when (event) {
@@ -40,6 +58,8 @@ class CartViewModel @Inject constructor() : ViewModel() {
                     items = items,
                     totalPrice = items.sumOf { it.price * it.quantity }
                 )
+                cartPrefs.saveCart(_uiState.value.items)
+
             }
 
             is CartEvent.RemoveFromCart -> {
@@ -61,17 +81,16 @@ class CartViewModel @Inject constructor() : ViewModel() {
                         totalPrice = items.sumOf { it.price * it.quantity }
                     )
                 }
+                cartPrefs.saveCart(_uiState.value.items)
+
+
+
             }
 
-            CartEvent.Checkout -> {
-                _uiState.value = _uiState.value.copy(
-                    isLoading = true
-                )
+            CartEvent.ClearCart -> {
+                _uiState.value = CartUiState()
+                cartPrefs.saveCart(_uiState.value.items)
 
-                viewModelScope.launch {
-                    delay(1000)
-                    _uiState.value = CartUiState(isOrderSuccess = true)
-                }
             }
 
             else -> {}

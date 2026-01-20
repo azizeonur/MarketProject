@@ -7,4 +7,5 @@ sealed interface CartEvent {
     data class RemoveFromCart(val productId: String) : CartEvent
     object Checkout : CartEvent
     object ClearMessage : CartEvent
+    object ClearCart : CartEvent
 }

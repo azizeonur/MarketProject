@@ -2,7 +2,6 @@ package com.example.getir.presention.cartView
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.runtime.getValue
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -13,49 +12,47 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.getir.domain.card.CartItem
+import com.example.getir.ui.theme.EmeraldGreen
+import com.example.getir.ui.theme.TopAppBarMenu
 
 @Composable
 fun CartScreen(
-    viewModel: CartViewModel
+    viewModel: CartViewModel,
+    onBack: () -> Unit,
+    onLogout: () -> Unit,
+    onCheckout: () -> Unit
 ) {
     val state by viewModel.uiState.collectAsState()
 
-    // ✅ Success yakala
-    LaunchedEffect(state.isOrderSuccess) {
-        if (state.isOrderSuccess) {
-            viewModel.onEvent(CartEvent.ClearMessage)
-        }
-    }
-
-    // ✅ Error yakala
     LaunchedEffect(state.error) {
-        state.error?.let {
-            viewModel.onEvent(CartEvent.ClearMessage)
-        }
+        state.error?.let { viewModel.onEvent(CartEvent.ClearMessage) }
     }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-
-        Column(modifier = Modifier.fillMaxSize()) {
-
+    Scaffold(
+        topBar = {
+            TopAppBarMenu(onLogout = onLogout)
+        }
+    ) { padding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+                .padding(16.dp)
+        ) {
             LazyColumn(
                 modifier = Modifier
                     .weight(1f)
@@ -66,52 +63,56 @@ fun CartScreen(
                 }
             }
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
-            Text(
-                text = "Toplam: ${state.totalPrice} ₺",
-                style = MaterialTheme.typography.titleMedium
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Button(
-                onClick = { viewModel.onEvent(CartEvent.Checkout) },
-                enabled = state.items.isNotEmpty() && !state.isLoading,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                if (state.isLoading) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.height(20.dp),
-                        strokeWidth = 2.dp
-                    )
-                } else {
-                    Text("Siparişi Tamamla")
-                }
-            }
-
-            state.error?.let {
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(it, color = MaterialTheme.colorScheme.error)
-            }
-
-            if (state.isOrderSuccess) {
-                Spacer(modifier = Modifier.height(8.dp))
+            Column(modifier = Modifier.fillMaxWidth()) {
                 Text(
-                    "Sipariş başarıyla alındı 🎉",
-                    color = MaterialTheme.colorScheme.primary
+                    text = "Toplam: ${state.totalPrice} ₺",
+                    style = MaterialTheme.typography.titleMedium
                 )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Button(
+                    onClick = { onCheckout() },
+                    enabled = state.items.isNotEmpty() && !state.isLoading,
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = EmeraldGreen,
+                        contentColor = MaterialTheme.colorScheme.onPrimary
+                    )
+                ) {
+                    if (state.isLoading) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.height(20.dp),
+                            strokeWidth = 2.dp,
+                            color = MaterialTheme.colorScheme.secondary
+                        )
+                    } else {
+                        Text("Siparişi Tamamla")
+                    }
+                }
+
+                state.error?.let {
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(it, color = MaterialTheme.colorScheme.error)
+                }
             }
         }
     }
 }
+
 @Composable
 fun CartItemRow(item: CartItem) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 4.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = EmeraldGreen,
+            contentColor = MaterialTheme.colorScheme.onPrimary
+        )
     ) {
         Row(
             modifier = Modifier
@@ -120,19 +121,26 @@ fun CartItemRow(item: CartItem) {
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Column {
-                Text(item.name, style = MaterialTheme.typography.bodyLarge)
+                Text(
+                    text= item.name,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onPrimary
+                )
                 Text(
                     text = "Adet: ${item.quantity}",
-                    style = MaterialTheme.typography.bodyMedium
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onPrimary
                 )
             }
             Text(
                 text = "${item.price * item.quantity} ₺",
-                style = MaterialTheme.typography.bodyLarge
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onPrimary
             )
         }
     }
 }
+
 @Preview(showBackground = true)
 @Composable
 fun CartScreenPreview() {

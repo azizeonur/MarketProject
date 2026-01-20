@@ -18,7 +18,8 @@ import javax.inject.Inject
 @HiltViewModel
 class AuthViewModel @Inject constructor(
     private val loginUseCase: LoginUseCase,
-    private val registerUseCase: RegisterUseCase
+    private val registerUseCase: RegisterUseCase,
+    private val authRepository: AuthRepository
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(AuthState())
@@ -31,7 +32,13 @@ class AuthViewModel @Inject constructor(
             AuthEvent.ClearError -> _state.value = _state.value.copy(error = null)
         }
     }
+    fun isLoggedIn(): Boolean {
+        return authRepository.isLoggedIn()
+    }
 
+    fun logOut() {
+        authRepository.logout()
+    }
     private fun login(email: String, password: String) {
         viewModelScope.launch {
             _state.value = _state.value.copy(isLoading = true, error = null)

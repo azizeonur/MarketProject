@@ -36,8 +36,6 @@ fun RegisterScreen(
     onNavigateLogin: () -> Unit
 ) {
     val Emerald = Color(0xFF2ECC71)
-    val EmeraldDark = Color(0xFF27AE60)
-
     val state by viewModel.state.collectAsState()
 
     var name by remember { mutableStateOf("") }
